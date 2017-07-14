@@ -2,7 +2,12 @@
 
 const net = require('net');
 
-const server = net.createServer((socket) => {
+const server = net.createServer((request) => {
+
+  request.on('data', (data) => {
+    console.log(data);
+    request.end();
+  });
 
 });
 

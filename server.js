@@ -18,10 +18,7 @@ var Connection = "Connection: Keep-Alive";
 var bodyConnection = "test";
 var Content_Length = "test";
 
-var present = statusLine + '\n\''+ myServer + '\n\''+ Today + '\n\'' + Content_Type + '\n\''+ Content_Length + '\n\''+ Connection + '\n\''+ '\n\'' + bodyConnection;
-
-
-console.log(present);
+var present = statusLine + '\n'+ myServer + '\n'+ Today + '\n' + Content_Type + '\n'+ Connection;
 
   request.on('data', (data) => {
     clientRequest = data.toString().split(' ', 3);
@@ -34,37 +31,48 @@ console.log(present);
 
             break;
           case '/index.html':
-                console.log((transform(urlRequest )));
+                 transform(urlRequest);
+
             break;
           case '/hydrogen.html':
-                console.log(transform(urlRequest ));
+                 transform(urlRequest);
+
             break;
           case '/helium.html':
-                console.log((transform(urlRequest )));
+                 transform(urlRequest);
+
             break;
           case '/404.html':
-                console.log((transform(urlRequest )));
+                 transform(urlRequest);
+
             break;
           case '/css/styles.css':
-                console.log((transform(urlRequest )));
+                 transform(urlRequest);
+
             break;
+            default: request.end();
         }
       }
-
-    request.end();
   });
 
   function transform(file){
     fs.readFile('.' + file, (err, data) => {
       //will return contents of file
       if(err) throw err;
-      /*console.log('data', data.toString());*/
-      return data || err;
+      var moo = data.toString();
+      bodyConnection = moo;
+      Content_Length = moo.length;
+      present += '\n'+ "Content-Length:" + Content_Length + '\n' + ' ' + '\n' +bodyConnection;
+      console.log(present);
+      request.write(present);
+      request.end();
     });
-    }
-  });
+  }
+});
+
 
 server.listen(8080, '0.0.0.0', () => {
   console.log('server bound');
 
 });
+

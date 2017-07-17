@@ -31,12 +31,12 @@ var errorResult = errorStatusLine + '\n'+ myServer + '\n'+ Today + '\n' + Conten
           default:
               request.end();
         }
-
     });
 
     function processHead(file){
       fs.readFile('.' + file, (err, data) => {
-          if(data !== undefined) {
+        console.log(file);
+          if(data !== undefined && file !== '/404.html') {
           var moo = data.toString();
           Content_Length = moo.length;
           present += '\n' + "Content-Length:" + Content_Length + '\n';
@@ -57,7 +57,7 @@ var errorResult = errorStatusLine + '\n'+ myServer + '\n'+ Today + '\n' + Conten
 
     function processGet(file){
       fs.readFile('.' + file, (err, data) => {
-          if(data !== undefined) {
+          if(data !== undefined && file !== '/404.html') {
           var moo = data.toString();
           bodyConnection = moo;
           Content_Length = moo.length;

@@ -15,6 +15,8 @@ var Connection = "Connection: Keep-Alive";
 
 var present = statusLine + '\n'+ myServer + '\n'+ Today + '\n' + Content_Type + '\n'+ Connection;
 
+var errorResult = errorStatusLine + '\n'+ myServer + '\n'+ Today + '\n' + Content_Type + '\n'+ Connection;
+
     request.on('data', (data) => {
       clientRequest = data.toString().split(' ', 3);
 
@@ -26,31 +28,52 @@ var present = statusLine + '\n'+ myServer + '\n'+ Today + '\n' + Content_Type + 
           case 'HEAD':
                  processHead(clientRequest[1]);
             break;
-            default: processGet('./404.html');
+          default:
+              request.end();
         }
 
     });
 
     function processHead(file){
       fs.readFile('.' + file, (err, data) => {
-        if(err) throw err;
-        var moo = data.toString();
-        Content_Length = moo.length;
-        present += '\n'+ "Content-Length:" + Content_Length;
-        request.write(present);
-        request.end();
+          if(data !== undefined) {
+          var moo = data.toString();
+          Content_Length = moo.length;
+          present += '\n' + "Content-Length:" + Content_Length + '\n';
+          request.write(present);
+          request.end();
+          } else {
+            fs.readFile('./404.html', (err, data) => {
+            var moo = data.toString();
+            bodyConnection = moo;
+            Content_Length = moo.length;
+            errorResult += '\n' + "Content-Length:" + Content_Length + '\n';
+            request.write(errorResult);
+            request.end();
+            });
+          }
       });
     }
 
     function processGet(file){
       fs.readFile('.' + file, (err, data) => {
-        if(err) throw err;
-         var moo = data.toString();
+          if(data !== undefined) {
+          var moo = data.toString();
           bodyConnection = moo;
           Content_Length = moo.length;
           present += '\n'+ "Content-Length:" + Content_Length + '\n\n' + bodyConnection;
           request.write(present);
           request.end();
+          } else {
+            fs.readFile('./404.html', (err, data) => {
+            var moo = data.toString();
+            bodyConnection = moo;
+            Content_Length = moo.length;
+            errorResult += '\n'+ "Content-Length:" + Content_Length + '\n\n' + bodyConnection;
+            request.write(errorResult);
+            request.end();
+            });
+          }
       });
     }
 });
